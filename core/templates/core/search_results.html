@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Search — Cinema Journal{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1 class="hero-title">Search results for "{{ query }}"</h1>
+</section>
+
+<section class="grid-section">
+  {% if page_obj %}
+    <div class="movie-grid">
+      {% for movie in page_obj %}
+        <article class="movie-card">
+          <a class="poster-link" href="{% url 'movie_detail' movie.tmdb_id %}">
+            {% if movie.poster_path %}
+              <img class="poster" src="https://image.tmdb.org/t/p/w342{{ movie.poster_path }}" alt="{{ movie.title }}">
+            {% else %}
+              <div class="poster poster-placeholder">No image</div>
+            {% endif %}
+            <div class="small">
+              <div class="rating">Popularity: {{ movie.popularity|floatformat:1 }}</div>
+            </div>
+          </a>
+          <div class="card-body">
+            <h3 class="movie-title" title="{{ movie.title }}">{{ movie.title }}</h3>
+            <div class="movie-meta">
+              <span class="date">{{ movie.release_date|date:"Y-m-d" }}</span>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_range %}
+      <ul class="pagination">
+        {% for num in page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <p class="muted">No results found for "{{ query }}".</p>
+  {% endif %}
+</section>
+{% endblock %}

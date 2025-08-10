@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Home — Cinema Journal{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- hero.html -->
+<!-- <div class="hero-section">
+    <div class="hero-content">
+      <img src="{% static 'hero.svg' %}" alt="CINÉMATIQUE Logo" >
+    </div>
+    
+  
+</div> -->
+
+<section class="hero">
+  <h1 class="hero-title">Popular right now</h1>
+  <p class="hero-sub">Curated from TMDb — click any poster for details.</p>
+</section>
+
+<section class="grid-section">
+  <div class="movie-grid">
+    {% for movie in page_obj %}
+      <article class="movie-card">
+        <a class="poster-link" href="{% url 'movie_detail' movie.tmdb_id %}">
+          {% if movie.poster_path %}
+            <img class="poster" src="https://image.tmdb.org/t/p/w342{{ movie.poster_path }}" alt="{{ movie.title }}">
+          {% else %}
+            <div class="poster poster-placeholder">No image</div>
+          {% endif %}
+          
+        </a>
+
+        <div class="card-body">
+            <div class="small">
+                <div class="rating">Popularity: {{ movie.popularity|floatformat:1 }}</div>
+            </div>
+          <h3 class="movie-title" title="{{ movie.title }}">{{ movie.title }}</h3>
+          <div class="movie-meta">
+            <span class="date">{{ movie.release_date|date:"Y-m-d" }}</span>
+          </div>
+          
+        </div>
+      </article>
+    {% empty %}
+      <p class="muted">No movies in the database yet — run <code>python manage.py refresh_movies</code>.</p>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+    <nav class="pagination-wrap" aria-label="Movies pagination">
+      <ul class="pagination-list">
+        {% if page_obj.has_previous %}
+          <li><a href="?page={{ page_obj.previous_page_number }}" class="page-link">‹ Prev</a></li>
+        {% else %}
+          <li class="disabled"><span class="page-link">‹ Prev</span></li>
+        {% endif %}
+
+        {% for num in page_range %}
+          {% if page_obj.number == num %}
+            <li class="active"><span class="page-link">{{ num }}</span></li>
+          {% else %}
+            <li><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li><a href="?page={{ page_obj.next_page_number }}" class="page-link">Next ›</a></li>
+        {% else %}
+          <li class="disabled"><span class="page-link">Next ›</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}{{ movie.title }} — Cinema Journal{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap mb-3 mt-0 pt-0 ms-auto"><a href="{% if request.META.HTTP_REFERER and 'search' in request.META.HTTP_REFERER %}{{ request.META.HTTP_REFERER }}{% elif request.META.HTTP_REFERER %}{{ request.META.HTTP_REFERER }}{% else %}{% url 'home' %}{% endif %}"
+             class="btn btn-outline-light me-2">← Back</a></div>
+<div class="container py-5 text-white">
+    
+    <div class="row">
+        <div class="col-md-4">
+            
+            {% if movie.poster_path %}
+                <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="img-fluid rounded shadow">
+            {% else %}
+                <div class="bg-secondary text-center p-5 rounded">No Image</div>
+            {% endif %}
+
+            <div class="d-flex flex-wrap gap-2 mb-3 ms-auto gap-4 ">
+                <hr class="border-secondary my-4">
+                <h5 class="mb-3"></h5>
+                    <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+          
+
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'add_to_journal' movie.tmdb_id %}" class="m-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success">
+                + Add to Journal
+              </button>
+            </form>
+          {% else %}
+            <a class="btn btn-outline-light" href="{% url 'login' %}?next={{ request.path }}">Log in to add</a>
+          {% endif %}
+        
+
+        <!-- Quick-action row: watchlist / favorite / stars -->
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+          {% if user.is_authenticated %}
+            <!-- Watchlist -->
+            <button type="button"
+                    class="btn {% if entry and entry.status == 'watchlist' %}btn-success{% else %}btn-outline-light{% endif %}"
+                    data-action="toggle-status"
+                    data-tmdb-id="{{ movie.tmdb_id }}"
+                    data-status="watchlist"
+                    aria-pressed="{% if entry and entry.status == 'watchlist' %}true{% else %}false{% endif %}">
+              📌 Watchlist
+            </button>
+
+            <!-- Favorite -->
+            <button type="button"
+                    class="btn {% if entry and entry.status == 'favorite' %}btn-success{% else %}btn-outline-light{% endif %}"
+                    data-action="toggle-status"
+                    data-tmdb-id="{{ movie.tmdb_id }}"
+                    data-status="{% if entry and entry.status == 'favorite' %}watched{% else %}favorite{% endif %}"
+                    aria-pressed="{% if entry and entry.status == 'favorite' %}true{% else %}false{% endif %}">
+              ❤️ Favorite
+            </button>
+
+            <!-- Stars (AJAX) and numeric display -->
+            <div class="d-flex align-items-center ms-2">
+              <div class="me-2">
+                <div class="star-container" data-tmdb-id="{{ movie.tmdb_id }}" data-rating="{{ entry.rating|default:0 }}">
+                  {% for _ in "12345" %}
+                    {% with val=forloop.counter %}
+                      <span class="star fs-4 mx-1 {% if val <= stars_to_fill %}rated{% endif %}"
+                            role="button"
+                            title="Rate {{ val }} star{% if val > 1 %}s{% endif %}"
+                            data-action="rate"
+                            data-tmdb-id="{{ movie.tmdb_id }}"
+                            data-value="{{ val }}">★</span>
+                    {% endwith %}
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="small">
+                {% if entry and entry.rating %}
+                  {{ entry.rating }} / 10
+                {% else %}
+                  No rating
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- graceful fallback: edit entry (non-JS) -->
+            <div class="ms-auto">
+              {% if entry %}
+                <a href="{% url 'edit_journal_entry' entry.pk %}" class="btn btn-sm btn-outline-light">Edit entry</a>
+              {% else %}
+                <a href="{% url 'edit_journal_entry' 0 %}" class="btn btn-sm btn-outline-light visually-hidden">Edit</a>
+                {# If no entry, user can click Add to Journal then Edit; keep a visual fallback link removed #}
+              {% endif %}
+            </div>
+
+          {% else %}
+            <small class="text-muted">Log in to add to your journal, rate, or favorite this movie.</small>
+          {% endif %}
+        </div>
+
+            </div>
+        </div>
+        </div>
+        <div class="col-md-8">
+            <!-- Trailer embed (if available) -->
+            {% if trailer_embed %}
+            <div class="mb-3">
+                <h6>Trailer</h6>
+                <div class="ratio ratio-16x9 shadow-sm">
+                <iframe src="{{ trailer_embed }}" title="Trailer for {{ movie.title }}" allowfullscreen loading="lazy"></iframe>
+                </div>
+            </div>
+            {% endif %}
+            <h1 class="display-4">{{ movie.title }}</h1>
+            <p class="lead">{{ movie.overview }}</p>
+            <p><strong>Release Date:</strong> {{ movie.release_date|date:"F j, Y" }}</p>
+            <p><strong>Popularity:</strong> {{ movie.popularity|floatformat:1 }}</p>
+            
+                <p>
+        <strong>Genres:</strong>
+        {% if genres %}
+            {% for genre in genres %}
+            <span class="badge bg-secondary me-1">{{ genre }}</span>
+            {% endfor %}
+        {% else %}
+            <span class="text-muted">No genres available</span>
+        {% endif %}
+        </p>
+
+        <p><strong>Runtime:</strong> 
+        {% if runtime %}
+            {{ runtime }} minutes
+        {% else %}
+            N/A
+        {% endif %}
+        </p>
+
+        
+        <!-- Details & actions -->
+      
+        
+
+        <!-- Back / Add to journal -->
+        
+        <!-- Optional extra info: overview / cast / external links -->
+        {% if cast %}
+        <hr class="border-secondary my-4">
+        <h5 class="mb-3">Top billed cast</h5>
+        <div class="row g-3">
+            {% for member in cast %}
+            <div class="col-6 col-md-3 col-lg-2 text-center">
+                {% if member.profile_path %}
+                <img src="https://image.tmdb.org/t/p/w185{{ member.profile_path }}" alt="{{ member.name }}" class="img-fluid rounded shadow-sm mb-2">
+                {% else %}
+                <div class="bg-secondary text-center p-3 rounded mb-2">No photo</div>
+                {% endif %}
+                <div class="small"><strong>{{ member.name }}</strong></div>
+                <div class="text-muted small">{{ member.character }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="mt-3">
+          {% comment %} Add more sections here later: genres, runtime, trailer link, etc. {% endcomment %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

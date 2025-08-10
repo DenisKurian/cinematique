@@ -1,0 +1,141 @@
+body {
+    background-color: #141414;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 1rem;
+}
+
+.movie-card {
+    background-color: transparent;
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 25px rgba(255, 0, 0, 0.3);
+}
+
+.poster {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+
+.rating {
+    font-weight: bold;
+    color: gold;
+}
+
+.pagination-wrap {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.pagination-list {
+    display: inline-flex;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination-list li {
+    margin: 0 5px;
+}
+
+.pagination-list .page-link {
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.pagination-list .page-link:hover {
+    background: red;
+    border-color: red;
+}
+
+/* .star { color: #6c757d; cursor: pointer; transition: color .15s ease; }
+.star.rated { color: gold; text-shadow: 0 0 6px rgba(255,215,0,0.2); }
+[data-action="toggle-status"].btn-outline-light { opacity: 0.95; } */
+
+.star { color: #6c757d; cursor: pointer; transition: color .15s ease; margin-right: 2px;}
+.star.rated { color: gold; text-shadow: 0 0 6px rgba(255,215,0,0.2); }
+
+/* stars */
+.star {
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.12s ease;
+  margin-right: 6px;
+  display: inline-block;
+  transform-origin: center;
+}
+.star:hover {
+  transform: scale(1.12);
+  color: #ffd95a;
+}
+.star.rated {
+  color: #ffd95a;
+  text-shadow: 0 0 6px rgba(255,217,90,0.25);
+}
+
+/* badge spacing for genres */
+.badge { font-size: 0.85rem; padding: 0.35em 0.6em; }
+
+/* button tiny microcopy adjustments */
+.btn-outline-light[title], .btn-success[title] { position: relative; }
+
+
+/* hero.css */
+
+.hero-section {
+  position: relative;
+  width: 100vw;
+  height: 100vh; /* or 100vh for full screen height */
+  background-image: url('/static/path-to-your-image.jpg'); /* your hero image */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  margin-top: 20px;
+}
+
+/* Gradient overlay using a pseudo element */
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* top:0; bottom:0; left:0; right:0 */
+  background: linear-gradient(to top, rgba(41, 41, 41, 0.8), rgba(255, 247, 247, 0.3) 60%, rgba(255, 247, 247, 0));
+  z-index: 1;
+}
+
+/* Content inside the hero, positioned above overlay */
+.hero-content {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}My Journal — Cinema Journal{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2>My Journal</h2>
+
+  <div class="row">
+    {% for entry in page_obj %}
+    <div class="col-md-6 mb-3">
+      <div class="card bg-dark text-white">
+        <div class="row g-0">
+          <div class="col-4">
+            {% if entry.movie.poster_path %}
+              <img src="https://image.tmdb.org/t/p/w185{{ entry.movie.poster_path }}" class="img-fluid rounded-start" alt="{{ entry.movie.title }}">
+            {% else %}
+              <div class="bg-secondary text-center p-4 rounded-start">No Image</div>
+            {% endif %}
+          </div>
+          <div class="col-8">
+            <div class="card-body">
+              <h5 class="card-title">{{ entry.movie.title }}</h5>
+              <p class="card-text small text-muted">{{ entry.status }} • {{ entry.watched_date }}</p>
+              <p class="card-text">{{ entry.review|truncatechars:140 }}</p>
+
+              <!-- Quick action buttons + stars -->
+              <div class="d-flex gap-2 mt-2 align-items-center">
+                <!-- Watchlist button -->
+                <button
+                  type="button"
+                  class="btn {% if entry.status == 'watchlist' %}btn-success{% else %}btn-outline-light{% endif %}"
+                  data-action="toggle-status"
+                  data-tmdb-id="{{ entry.movie.tmdb_id }}"
+                  data-status="watchlist">
+                  📌 Watchlist
+                </button>
+
+                <!-- Favorite button -->
+                <button
+                  type="button"
+                  class="btn {% if entry.status == 'favorite' %}btn-success{% else %}btn-outline-light{% endif %}"
+                  data-action="toggle-status"
+                  data-tmdb-id="{{ entry.movie.tmdb_id }}"
+                  data-status="{% if entry.status == 'favorite' %}watched{% else %}favorite{% endif %}">
+                  ❤️ Favorite
+                </button>
+
+                <!-- Stars (clickable) + current rating shown -->
+                <div class="ms-3 star-container" data-tmdb-id="{{ entry.movie.tmdb_id }}" data-rating="{{ entry.rating|default:0 }}">
+                  {% comment %} 5 stars: each star has data-value 1..5 (JS converts to 1..10 scale) {% endcomment %}
+                  <span class="star fs-5" data-action="rate" data-tmdb-id="{{ entry.movie.tmdb_id }}" data-value="1">★</span>
+                  <span class="star fs-5" data-action="rate" data-tmdb-id="{{ entry.movie.tmdb_id }}" data-value="2">★</span>
+                  <span class="star fs-5" data-action="rate" data-tmdb-id="{{ entry.movie.tmdb_id }}" data-value="3">★</span>
+                  <span class="star fs-5" data-action="rate" data-tmdb-id="{{ entry.movie.tmdb_id }}" data-value="4">★</span>
+                  <span class="star fs-5" data-action="rate" data-tmdb-id="{{ entry.movie.tmdb_id }}" data-value="5">★</span>
+                  <small class="text-muted ms-2">({{ entry.rating|default:"—" }})</small>
+                </div>
+
+                <!-- Edit button aligned right -->
+                <a href="{% url 'edit_journal_entry' entry.pk %}" class="btn btn-sm btn-primary ms-auto">Edit</a>
+              </div>
+              <!-- end quick actions -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <p class="muted">Your journal is empty. Add movies from the detail page.</p>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+    <nav aria-label="Journal pagination">
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Prev</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}
