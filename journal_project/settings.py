@@ -117,7 +117,7 @@ if not DEBUG:
     # Allow all Railway-assigned domains dynamically
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+    ALLOWED_HOSTS = ["cinematique.up.railway.app", "localhost", "127.0.0.1"]
 # Default: local Postgres
 DATABASES = {
     'default': {
