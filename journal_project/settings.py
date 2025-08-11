@@ -31,19 +31,35 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "fallback-secret-key-for-local")
 
+# DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
+# if not DEBUG:
+#     ALLOWED_HOSTS = ["cinematique.up.railway.app"]
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+#     CSRF_TRUSTED_ORIGINS = [
+#         "https://cinematique.up.railway.app",
+#         "https://www.cinematique.up.railway.app",
+#     ]
+# else:
+#     ALLOWED_HOSTS = ["localhost", "127.0.0.1", "cinematique.up.railway.app"]
+#     CSRF_TRUSTED_ORIGINS = []
+import os
+
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-if not DEBUG:
-    ALLOWED_HOSTS = ["cinematique.up.railway.app"]
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+ALLOWED_HOSTS = ["cinematique.up.railway.app", "localhost", "127.0.0.1"]
 
-    CSRF_TRUSTED_ORIGINS = [
-        "https://cinematique.up.railway.app",
-        "https://www.cinematique.up.railway.app",
-    ]
-else:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "cinematique.up.railway.app"]
-    CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = [
+    "https://cinematique.up.railway.app",
+    "https://www.cinematique.up.railway.app",
+]
+
+# Optional: handle preview URLs dynamically
+railway_domain = os.environ.get("RAILWAY_STATIC_URL")
+if railway_domain:
+    ALLOWED_HOSTS.append(railway_domain)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_domain}")
 
 # DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
