@@ -104,22 +104,22 @@ WSGI_APPLICATION = 'journal_project.wsgi.application'
 #     }
 # }
 
-# if not DEBUG:
-#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-#     # Always include both bare and www versions for CSRF trust
-#     CSRF_TRUSTED_ORIGINS = []
-#     for host in ALLOWED_HOSTS:
-#         if host not in ["localhost", "127.0.0.1"]:
-#             CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
-#             CSRF_TRUSTED_ORIGINS.append(f"https://www.{host}")
-
-
 if not DEBUG:
-    # Allow all Railway-assigned domains dynamically
-    ALLOWED_HOSTS = ["*"]
-else:
-    ALLOWED_HOSTS = ["cinematique.up.railway.app", "localhost", "127.0.0.1"]
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # Always include both bare and www versions for CSRF trust
+    CSRF_TRUSTED_ORIGINS = []
+    for host in ALLOWED_HOSTS:
+        if host not in ["localhost", "127.0.0.1"]:
+            CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
+            CSRF_TRUSTED_ORIGINS.append(f"https://www.{host}")
+
+
+# if not DEBUG:
+#     # Allow all Railway-assigned domains dynamically
+#     ALLOWED_HOSTS = ["*"]
+# else:
+#     ALLOWED_HOSTS = ["cinematique.up.railway.app", "localhost", "127.0.0.1"]
 # Default: local Postgres
 DATABASES = {
     'default': {
