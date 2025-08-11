@@ -33,10 +33,24 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "fallback-secret-key-for-local"
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
+if not DEBUG:
+    ALLOWED_HOSTS = ["cinematique.up.railway.app"]
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    CSRF_TRUSTED_ORIGINS = [
+        "https://cinematique.up.railway.app",
+        "https://www.cinematique.up.railway.app",
+    ]
+else:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "cinematique.up.railway.app"]
+    CSRF_TRUSTED_ORIGINS = []
+
+# DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
 # SECURITY WARNING: don't run with debug turned on in production!
 
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
 # Application definition
@@ -104,15 +118,15 @@ WSGI_APPLICATION = 'journal_project.wsgi.application'
 #     }
 # }
 
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# if not DEBUG:
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-    # Always include both bare and www versions for CSRF trust
-    CSRF_TRUSTED_ORIGINS = []
-    for host in ALLOWED_HOSTS:
-        if host not in ["localhost", "127.0.0.1"]:
-            CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
-            CSRF_TRUSTED_ORIGINS.append(f"https://www.{host}")
+#     # Always include both bare and www versions for CSRF trust
+#     CSRF_TRUSTED_ORIGINS = []
+#     for host in ALLOWED_HOSTS:
+#         if host not in ["localhost", "127.0.0.1"]:
+#             CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
+#             CSRF_TRUSTED_ORIGINS.append(f"https://www.{host}")
 
 
 # if not DEBUG:
