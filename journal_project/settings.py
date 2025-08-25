@@ -48,18 +48,18 @@ import os
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = ["cinematique.up.railway.app", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", ".vercel.app,localhost,127.0.0.1").split(",")
+
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://cinematique.up.railway.app",
-    "https://www.cinematique.up.railway.app",
+    "https://*.vercel.app",
+    # "https://your-custom-domain.com",  # add this after you configure your domain
 ]
 
-# Optional: handle preview URLs dynamically
-railway_domain = os.environ.get("RAILWAY_STATIC_URL")
-if railway_domain:
-    ALLOWED_HOSTS.append(railway_domain)
-    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_domain}")
+vercel_url = os.environ.get("VERCEL_URL")
+if vercel_url:
+    ALLOWED_HOSTS.append(vercel_url)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{vercel_url}")
 
 # DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
